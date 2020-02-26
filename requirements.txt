@@ -1,5 +1,4 @@
 tensorflow
-pillow
 music21
 numpy
 flask
