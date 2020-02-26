@@ -100,20 +100,24 @@ def generate(genre, instr, duration):
     
     note_len = int( 250/63 * duration )
     print(genre)
-    if genre == 'rock':
-        model = load_model('./encoding/rock/rock_model.h5')
-        notes_dir = './encoding/rock/notes'
-    elif genre == 'pop':
+    
+    model = load_model('./encoding/rock/'+genre+'_model.h5')
+    notes_dir = './encoding/' + genre + '/notes'
+    
+    '''
+    if genre == 'pop':
         model = load_model('./encoding/pop/pop_model.h5')
         notes_dir = './encoding/pop/notes'
-        
+    '''    
 
     if instr == 'guitar':
-        instrmt = instrument.Guitar()
+        instrmt = instrument.ElectricGuitar()
     elif instr == 'violin':
         instrmt = instrument.Violin()
     elif instr == 'piano':
         instrmt = instrument.Piano()
+    else:
+        instrmt = instrument.BassDrum()
 
     with open(notes_dir, 'rb') as filepath:
         notes = pickle.load(filepath)

@@ -29,11 +29,29 @@
    <br /><br />
 <h1>Music Gen</h1><br/>
 <form method="post" enctype="multipart/form-data" action="/uploader" >
+
 <div class="form-group row col-3 ">
-<label for="genre"> select genre: </label> 
+
+    <label for="mode"> select mode: </label> 
+<select id="mode" name="mode" onchange="modeChg(this)" class="custom-select" >
+    <option value="option">option</option>
+    <option value="speech">speech</option>
+  </select>
+  
+</div>
+    
+    <div id="all-div">
+    
+
+    <div class="form-group row col-3 ">
+
+    <label for="genre"> select genre: </label> 
 <select id="genre" name="genre" class="custom-select" >
     <option value="rock">Rock</option>
     <option value="pop">Pop</option>
+    <option value="jazz">Jazz</option>
+    <option value="country">Country</option>
+    
   </select>
   
 </div>
@@ -56,30 +74,150 @@
         <option value="30">30 secs</option>
     </br ></br>
 </div>
+<div class="form-group row col-3 "></div>
+<br />
+<div class="form-group row col-3 ">
+    <input type="submit" class="btn btn-primary" value="submit"/>
+    </div>
+</div>
 
+<div id="texbox" style="display: none;">
+    <p id="instrp">instrument: </p>
+    <p id="genrep">genre: </p>
 
+<div class="form-group row col-3 ">
+    <button id="start-btn"class="btn btn-primary" type="button" >start</button>
+    </div>
+<div class="form-group row col-3 ">
 <input type="submit" class="btn btn-primary" value="submit"/>
-
+</div>
+</div>
 
 </form>
-
-
 </center>
 
 
-</div>
+
+
+
 </div>
 
 </body>
 </html>
 
 <script>
-    
-    function incHeight() {
-    var el = document.getElementById("maincontainer");
-    var height = el.offsetHeight;
-    var newHeight = height + 200;
-    el.style.height = newHeight + 'px';
-}
+var instrarr = ['guitar','piano','violin','drums'];
+var genrearr = ['rock','pop','jazz','country'];
 
-</script>
+var instrmt ='';
+var dur = '';
+var genre = '';
+
+//var message = document.querySelector('#textbox');
+ 
+ var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+ var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
+ 
+ var grammar = '#JSGF V1.0;'
+ 
+ var recognition = new SpeechRecognition();
+ var speechRecognitionList = new SpeechGrammarList();
+ speechRecognitionList.addFromString(grammar, 1);
+ recognition.grammars = speechRecognitionList;
+ recognition.lang = 'en-US';
+ recognition.interimResults = false;
+ 
+ recognition.onresult = function(event) {
+     var last = event.results.length - 1;
+     var command = event.results[last][0].transcript;
+     console.log('text'+command);
+     //message.textContent = 'Voice Input: ' + command + '.';
+     genrearr.forEach(function(el){
+         
+        if(command.toLowerCase().includes(el))
+        {
+            genre = el;
+        };
+     
+     });
+
+     instrarr.forEach(function(el){
+         
+         if(command.toLowerCase().includes(el))
+         {
+             instrmt = el;
+         };
+      
+      });
+
+
+      $("#instrp").text('instrument: '+instrmt);
+      $('#instrument').val(instrmt);
+      
+      $("#genrep").text('genre: '+genre);
+      $('#genre').val(genre);
+
+      $('#duration').val('60');
+ };
+
+ 
+ recognition.onspeechend = function() {
+     recognition.stop();
+     console.log('stop');
+     $('#start-btn').show();
+ };
+ 
+
+ recognition.onerror = function(event) {
+    // message.textContent = 'Error occurred in recognition: ' + event.error;
+    console.log(event.error);
+    $('#start-btn').show();
+ };        
+ 
+ document.querySelector('#start-btn').addEventListener('click', function(){
+    $('#start-btn').hide();
+
+    //$('#start-btn').html('stop')
+        console.log("start");
+        recognition.start();
+    
+    
+    /*
+    else 
+    {
+        $('#start-btn').html('start')
+        
+        recognition.stop();
+        console.log("stop");
+    }
+    */
+     
+     
+ });
+ 
+ 
+ 
+ function modeChg(select)
+ {
+     var chc = select.options[select.selectedIndex].getAttribute("value");
+     if(chc == 'speech')
+     {
+         $('#all-div').hide();
+         $('#texbox').show();
+     }
+     else 
+     {
+         $('#all-div').show();
+         $('#texbox').hide();
+     }
+ 
+ }
+ 
+ function incHeight() {
+     var el = document.getElementById("maincontainer");
+     var height = el.offsetHeight;
+     var newHeight = height + 200;
+     el.style.height = newHeight + 'px';
+ }
+ 
+ </script>
