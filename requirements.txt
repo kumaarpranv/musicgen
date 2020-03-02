@@ -1,4 +1,5 @@
 tensorflow
 music21
+numpy
 flask
 gunicorn
